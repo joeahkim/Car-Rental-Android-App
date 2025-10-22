@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -76,8 +77,9 @@ fun LoginScreen(modifier: Modifier = Modifier,
             }
         }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(bottom = 20.dp)
         ) {
@@ -86,8 +88,9 @@ fun LoginScreen(modifier: Modifier = Modifier,
                 fontSize = 20.sp,
                 color = Color.Black
             )
-            OutlinedButton(onClick = onSignUpClick) {
-                Text("Sign up")
+            TextButton(onClick = onSignUpClick) {
+                Text(text = "Sign up",
+                    fontSize = 18.sp)
             }
         }
     }

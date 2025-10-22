@@ -2,6 +2,7 @@ package com.joeahkim.carrental.ui.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -10,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -79,8 +81,9 @@ fun SignUpScreen(onLoginClick: () -> Unit){
             }
         }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(bottom = 20.dp)
         ) {
@@ -89,8 +92,9 @@ fun SignUpScreen(onLoginClick: () -> Unit){
                 fontSize = 20.sp,
                 color = Color.Black
             )
-            OutlinedButton(onClick = onLoginClick) {
-                Text("Sign up")
+            TextButton(onClick = onLoginClick) {
+                Text(text = "Login",
+                    fontSize = 18.sp)
             }
         }
     }

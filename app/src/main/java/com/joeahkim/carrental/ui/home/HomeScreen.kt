@@ -50,7 +50,7 @@ fun HomeScreen() {
             )
 
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(6) { // placeholder logos
+                items(6) {
                     BrandIconPlaceholder()
                 }
             }
@@ -79,7 +79,6 @@ fun HomeScreen() {
             Spacer(modifier = Modifier.height(24.dp))
         }
 
-        // Recommended / Offers Section
         item {
             SectionHeader(title = "Special Offers", onSeeAllClick = { /*TODO*/ })
             OfferCardPlaceholder()
