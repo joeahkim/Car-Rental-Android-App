@@ -11,6 +11,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -51,7 +52,7 @@ fun MainHome() {
             when (page) {
                 0 -> HomeScreen()
                 1 -> FavoritesScreen()
-                2 -> MessagesScreen()
+                2 -> BookingsScreen()
                 3 -> ProfileScreen()
             }
         }
@@ -121,10 +122,10 @@ fun BottomNavigationBar(
 
 sealed class BottomNavItem(val route: String, val title: String, val icon: ImageVector) {
     companion object {
-        val items = listOf(Home, Favorites, Messages, Profile)
+        val items = listOf(Home, Favorites, Bookings, Profile)
     }
     object Home : BottomNavItem("home", "Home", Icons.Default.Home)
     object Favorites : BottomNavItem("favorites", "Saved", Icons.Default.Favorite)
-    object Messages : BottomNavItem("messages", "Messages", Icons.Default.Email)
+    object Bookings : BottomNavItem("bookings", "Bookings", Icons.Default.DateRange)
     object Profile : BottomNavItem("profile", "Profile", Icons.Default.Person)
 }

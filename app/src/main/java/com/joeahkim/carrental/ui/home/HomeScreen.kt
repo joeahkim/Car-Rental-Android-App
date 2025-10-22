@@ -22,7 +22,7 @@ import com.joeahkim.carrental.R
 
 @Composable
 fun HomeScreen() {
-    val clientName = "Gakuru"
+    val clientName = "Joeahkim"
 
     LazyColumn(
         modifier = Modifier
@@ -57,7 +57,6 @@ fun HomeScreen() {
             Spacer(modifier = Modifier.height(24.dp))
         }
 
-        // Top Cars Section
         item {
             SectionHeader(title = "Top Cars", onSeeAllClick = { /*TODO*/ })
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -68,7 +67,6 @@ fun HomeScreen() {
             Spacer(modifier = Modifier.height(24.dp))
         }
 
-        // Available Cars Section
         item {
             SectionHeader(title = "Available Cars", onSeeAllClick = { /*TODO*/ })
             LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -114,9 +112,8 @@ fun BrandIconPlaceholder() {
             .background(Color.White, shape = RoundedCornerShape(12.dp)),
         contentAlignment = Alignment.Center
     ) {
-        // Placeholder icon
         Icon(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground), // temporary icon
+            painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = "Car Brand",
             tint = Color.Gray,
             modifier = Modifier.size(36.dp)
