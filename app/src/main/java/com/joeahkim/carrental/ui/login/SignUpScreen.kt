@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SignUpScreen(){
+fun SignUpScreen(onLoginClick: () -> Unit){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
@@ -89,7 +89,7 @@ fun SignUpScreen(){
                 fontSize = 20.sp,
                 color = Color.White
             )
-            OutlinedButton(onClick = {}) {
+            OutlinedButton(onClick = onLoginClick) {
                 Text("Sign up")
             }
         }
@@ -99,5 +99,5 @@ fun SignUpScreen(){
 @Preview
 @Composable
 fun SignUpScreenPreview(){
-    SignUpScreen()
+    SignUpScreen(onLoginClick = {})
 }

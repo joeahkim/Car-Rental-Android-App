@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.joeahkim.carrental.navigation.AppNavigation
 import com.joeahkim.carrental.ui.home.MainHome
 import com.joeahkim.carrental.ui.login.LoginScreen
 import com.joeahkim.carrental.ui.theme.CarRentalTheme
@@ -21,7 +22,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CarRentalTheme {
-                MainHome()
+                AppNavigation()
             }
         }
     }
