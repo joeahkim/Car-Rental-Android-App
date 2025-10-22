@@ -21,9 +21,11 @@ fun AppNavigation() {
         composable(Routes.LOGIN) {
             LoginScreen(
                 onSignUpClick = { navController.navigate(Routes.SIGNUP) },
-                onLoginSuccess = {navController.navigate(Routes.MAIN_HOME){
-                    popUpTo(Routes.LOGIN) { inclusive = true }
-                }}
+                onLoginSuccess = {
+                    navController.navigate(Routes.MAIN_HOME) {
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                        launchSingleTop = true
+                    }}
             )
         }
         composable(Routes.SIGNUP) {

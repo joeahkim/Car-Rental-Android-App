@@ -30,10 +30,9 @@ fun HomeScreen() {
             .background(Color(0xFFF5F5F5))
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        // Greeting Section
         item {
             Text(
-                text = "Hi, $clientName 👋",
+                text = "Hi, $clientName",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF0A0E21),
@@ -41,7 +40,6 @@ fun HomeScreen() {
             )
         }
 
-        // Car Brands Row
         item {
             Text(
                 text = "Car Brands",
