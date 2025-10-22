@@ -42,9 +42,9 @@ fun SignUpScreen(onLoginClick: () -> Unit){
                 .padding(top = 60.dp)
         ) {
             Text(
-                text = "Create your account",
+                text = "Create an account",
                 fontSize = 44.sp,
-                color = Color.White,
+                color = Color.Black,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(top = 100.dp)
             )
@@ -56,22 +56,22 @@ fun SignUpScreen(onLoginClick: () -> Unit){
             TextField(
                 value = name,
                 onValueChange = { name = it },
-                shape = RoundedCornerShape(64.dp),
+                shape = RoundedCornerShape(8.dp),
                 label = { Text(text = "Full Name", fontSize = 24.sp) }
             )
             Spacer(modifier = Modifier.height(12.dp))
             TextField(
                 value = email,
                 onValueChange = { email = it },
-                shape = RoundedCornerShape(64.dp),
+                shape = RoundedCornerShape(8.dp),
                 label = { Text(text = "Email", fontSize = 24.sp) }
             )
             Spacer(modifier = Modifier.height(12.dp))
             TextField(
                 value = password,
                 onValueChange = { password = it },
-                shape = RoundedCornerShape(64.dp),
-                label = { Text(text = "Password", fontSize = 24.sp) }
+                shape = RoundedCornerShape(8.dp),
+                label = { Text(text = "Password", fontSize = 18.sp) }
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {  }) {
@@ -85,9 +85,9 @@ fun SignUpScreen(onLoginClick: () -> Unit){
                 .padding(bottom = 20.dp)
         ) {
             Text(
-                text = "Have an account?",
+                text = "Already have an account?",
                 fontSize = 20.sp,
-                color = Color.White
+                color = Color.Black
             )
             OutlinedButton(onClick = onLoginClick) {
                 Text("Sign up")

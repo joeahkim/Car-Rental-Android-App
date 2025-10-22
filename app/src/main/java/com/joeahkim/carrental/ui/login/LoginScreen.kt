@@ -28,7 +28,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun LoginScreen(modifier: Modifier = Modifier,
-                onSignUpClick: () -> Unit) {
+                onSignUpClick: () -> Unit,
+                onLoginSuccess: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -47,7 +48,7 @@ fun LoginScreen(modifier: Modifier = Modifier,
             Text(
                 text = "Welcome Back",
                 fontSize = 44.sp,
-                color = Color.White,
+                color = Color.Black,
                 fontWeight = FontWeight.ExtraBold,
                 modifier = Modifier.padding(top = 100.dp)
             )
@@ -59,32 +60,31 @@ fun LoginScreen(modifier: Modifier = Modifier,
             TextField(
                 value = email,
                 onValueChange = { email = it },
-                shape = RoundedCornerShape(64.dp),
+                shape = RoundedCornerShape(8.dp),
                 label = { Text(text = "Email", fontSize = 24.sp) }
             )
             Spacer(modifier = Modifier.height(12.dp))
             TextField(
                 value = password,
                 onValueChange = { password = it },
-                shape = RoundedCornerShape(64.dp),
+                shape = RoundedCornerShape(8.dp),
                 label = { Text(text = "Password", fontSize = 24.sp) }
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = {  }) {
+            Button(onClick = onLoginSuccess) {
                 Text(text = "Sign in", fontSize = 26.sp)
             }
         }
 
-        // Bottom Section
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .padding(bottom = 20.dp) // few dp above bottom
+                .padding(bottom = 20.dp)
         ) {
             Text(
                 text = "Don't have an account?",
                 fontSize = 20.sp,
-                color = Color.White
+                color = Color.Black
             )
             OutlinedButton(onClick = onSignUpClick) {
                 Text("Sign up")
@@ -96,5 +96,5 @@ fun LoginScreen(modifier: Modifier = Modifier,
 @Preview
 @Composable
 fun LoginScreenPreview(){
-    LoginScreen(onSignUpClick = {})
+    LoginScreen(onSignUpClick = {}, onLoginSuccess = {})
 }
