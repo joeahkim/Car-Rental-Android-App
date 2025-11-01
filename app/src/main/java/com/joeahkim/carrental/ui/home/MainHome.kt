@@ -24,6 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.joeahkim.carrental.ui.profile.ProfileScreen
+import com.joeahkim.carrental.ui.profile.ProfileViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -53,7 +56,7 @@ fun MainHome() {
                 0 -> HomeScreen()
                 1 -> FavoritesScreen()
                 2 -> BookingsScreen()
-                3 -> ProfileScreen()
+                3 -> ProfileScreen(viewModel = hiltViewModel())
             }
         }
     }

@@ -15,7 +15,9 @@ import com.joeahkim.carrental.navigation.AppNavigation
 import com.joeahkim.carrental.ui.home.MainHome
 import com.joeahkim.carrental.ui.login.LoginScreen
 import com.joeahkim.carrental.ui.theme.CarRentalTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

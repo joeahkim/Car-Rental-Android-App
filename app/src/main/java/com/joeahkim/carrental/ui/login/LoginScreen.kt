@@ -20,10 +20,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.joeahkim.carrental.data.local.DataStoreManager
 import com.joeahkim.carrental.data.model.LoginRequest
+import com.joeahkim.carrental.data.model.LoginResponse
 import com.joeahkim.carrental.data.remote.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +43,9 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
+    val dataStoreManager = remember { DataStoreManager(context) }
+
 
     Column(
         modifier = modifier
@@ -78,20 +84,19 @@ fun LoginScreen(
                     isLoading = true
                     errorMessage = null
 
-                    // Run the API call in coroutine
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val response = RetrofitInstance.api.login(LoginRequest(email, password))
-                            if (response.token != null) {
-                                withContext(Dispatchers.Main) {
-                                    isLoading = false
-                                    onLoginSuccess()
-                                }
-                            } else {
-                                withContext(Dispatchers.Main) {
-                                    isLoading = false
-                                    errorMessage = "Invalid credentials"
-                                }
+
+                            dataStoreManager.saveUserData(
+                                token = "Bearer ${response.token}",
+                                name  = response.client?.name ?: "",
+                                id    = response.client?.id.toString()
+                            )
+
+                            withContext(Dispatchers.Main) {
+                                isLoading = false
+                                onLoginSuccess()
                             }
                         } catch (e: Exception) {
                             withContext(Dispatchers.Main) {
@@ -104,7 +109,6 @@ fun LoginScreen(
             ) {
                 Text(text = if (isLoading) "Signing in..." else "Sign in")
             }
-
             errorMessage?.let {
                 Text(text = it, color = Color.Red, fontSize = 14.sp)
             }
