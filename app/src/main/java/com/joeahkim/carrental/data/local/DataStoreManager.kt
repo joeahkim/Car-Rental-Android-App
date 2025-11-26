@@ -1,16 +1,24 @@
 package com.joeahkim.carrental.data.local
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
-private val Context.dataStore by preferencesDataStore("user_prefs")
+// Keep your existing delegate
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("user_prefs")
 
-class DataStoreManager(private val context: Context) {
-
+@Singleton
+class DataStoreManager @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
     companion object {
         val USER_TOKEN = stringPreferencesKey("user_token")
         val USER_NAME = stringPreferencesKey("user_name")
@@ -25,21 +33,11 @@ class DataStoreManager(private val context: Context) {
         }
     }
 
-    fun getToken(): Flow<String?> = context.dataStore.data.map { prefs ->
-        prefs[USER_TOKEN]
-    }
-
-    fun getName(): Flow<String?> = context.dataStore.data.map { prefs ->
-        prefs[USER_NAME]
-    }
-
-    fun getUserId(): Flow<String?> = context.dataStore.data.map { prefs ->
-        prefs[USER_ID]
-    }
+    fun getToken(): Flow<String?> = context.dataStore.data.map { it[USER_TOKEN] }
+    fun getName(): Flow<String?> = context.dataStore.data.map { it[USER_NAME] }
+    fun getUserId(): Flow<String?> = context.dataStore.data.map { it[USER_ID] }
 
     suspend fun clear() {
-        context.dataStore.edit { prefs ->
-            prefs.clear()
-        }
+        context.dataStore.edit { it.clear() }
     }
 }

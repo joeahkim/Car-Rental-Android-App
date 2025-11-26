@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.kapt")
     id("com.google.dagger.hilt.android")
+    id("kotlin-parcelize")
+    kotlin("plugin.serialization") version "2.2.21"
 }
 
 android {
@@ -57,6 +59,8 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.57.2")
     kapt("com.google.dagger:hilt-compiler:2.57.2")
     implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation(libs.androidx.datastore.preferences)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

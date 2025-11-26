@@ -1,40 +1,40 @@
+// navigation/AppNavigation.kt
 package com.joeahkim.carrental.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.joeahkim.carrental.ui.home.MainHome
+import com.joeahkim.carrental.ui.main.MainScreen   // ← Use MainScreen, not MainHome
 import com.joeahkim.carrental.ui.login.LoginScreen
 import com.joeahkim.carrental.ui.login.SignUpScreen
-
-object Routes {
-    const val LOGIN = "login"
-    const val SIGNUP = "signup"
-    const val MAIN_HOME = "main_home"
-}
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Routes.LOGIN) {
-        composable(Routes.LOGIN) {
+
+    NavHost(
+        navController = navController,
+        startDestination = Routes.Login
+    ) {
+        composable<Routes.Login> {
             LoginScreen(
-                onSignUpClick = { navController.navigate(Routes.SIGNUP) },
+                onSignUpClick = { navController.navigate(Routes.SignUp) },
                 onLoginSuccess = {
-                    navController.navigate(Routes.MAIN_HOME) {
-                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    navController.navigate(Routes.Main) {
+                        popUpTo<Routes.Login> { inclusive = true }
                         launchSingleTop = true
-                    }}
+                    }
+                }
             )
         }
-        composable(Routes.SIGNUP) {
+        composable<Routes.SignUp> {
             SignUpScreen(
-                onLoginClick = { navController.navigate(Routes.LOGIN) }
+                onLoginClick = { navController.navigate(Routes.Login) }
             )
         }
-        composable(Routes.MAIN_HOME) {
-            MainHome()
+        composable<Routes.Main> {
+            MainScreen()   // ← This is your new smooth bottom nav screen
         }
     }
 }

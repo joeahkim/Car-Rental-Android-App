@@ -1,92 +1,102 @@
+// ui/home/HomeScreen.kt
 package com.joeahkim.carrental.ui.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.joeahkim.carrental.R
 
 @Composable
-fun HomeScreen() {
-    val clientName = "Joeahkim"
-
-    LazyColumn(
+fun HomeScreen(
+    clientName: String = "Joeahkim",
+    onSeeAllTopCars: () -> Unit = {},
+    onSeeAllAvailableCars: () -> Unit = {},
+    onCarClick: (Car) -> Unit = {},
+    onOfferClick: () -> Unit = {}
+) {
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .verticalScroll(rememberScrollState())
+            .background(MaterialTheme.colorScheme.surface)
+            .statusBarsPadding()           // Edge-to-edge ready
+            .padding(horizontal = 16.dp)
     ) {
-        item {
-            Text(
-                text = "Hi, $clientName",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF0A0E21),
-                modifier = Modifier.padding(top = 12.dp, bottom = 16.dp)
-            )
-        }
+        Spacer(modifier = Modifier.height(16.dp))
 
-        item {
-            Text(
-                text = "Car Brands",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.Black,
-                modifier = Modifier.padding(bottom = 8.dp)
-            )
+        Text(
+            text = "Hi, $clientName 👋",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Text(
+            text = "Find your perfect ride today",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 4.dp)
+        )
 
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(6) {
-                    BrandIconPlaceholder()
-                }
+        Spacer(modifier = Modifier.height(32.dp))
+
+        SectionTitle(title = "Car Brands")
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            items(dummyBrands) { brand ->
+                BrandItem(brand = brand)
             }
-            Spacer(modifier = Modifier.height(24.dp))
         }
 
-        item {
-            SectionHeader(title = "Top Cars", onSeeAllClick = { /*TODO*/ })
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(5) {
-                    CarCardPlaceholder(title = "Tesla Model 3", price = "$80/day")
-                }
+        Spacer(modifier = Modifier.height(32.dp))
+
+        SectionTitle(title = "Top Cars", onSeeAll = onSeeAllTopCars)
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            items(dummyTopCars) { car ->
+                CarCard(car = car, onClick = { onCarClick(car) })
             }
-            Spacer(modifier = Modifier.height(24.dp))
         }
 
-        item {
-            SectionHeader(title = "Available Cars", onSeeAllClick = { /*TODO*/ })
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                items(5) {
-                    CarCardPlaceholder(title = "BMW X5", price = "$65/day")
-                }
+        Spacer(modifier = Modifier.height(32.dp))
+
+        SectionTitle(title = "Available Cars", onSeeAll = onSeeAllAvailableCars)
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            items(dummyAvailableCars) { car ->
+                CarCard(car = car, onClick = { onCarClick(car) })
             }
-            Spacer(modifier = Modifier.height(24.dp))
         }
 
-        item {
-            SectionHeader(title = "Special Offers", onSeeAllClick = { /*TODO*/ })
-            OfferCardPlaceholder()
-            Spacer(modifier = Modifier.height(24.dp))
-        }
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Special Offers
+        SectionTitle(title = "Special Offers")
+        OfferCard(
+            title = "Limited Time Offer!",
+            subtitle = "Get 20% off on all SUVs this week",
+            onClick = onOfferClick
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }
 
 @Composable
-fun SectionHeader(title: String, onSeeAllClick: () -> Unit) {
+private fun SectionTitle(title: String, onSeeAll: (() -> Unit)? = null) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -94,119 +104,149 @@ fun SectionHeader(title: String, onSeeAllClick: () -> Unit) {
     ) {
         Text(
             text = title,
-            fontSize = 20.sp,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = Color.Black
+            color = MaterialTheme.colorScheme.onSurface
         )
-        TextButton(onClick = onSeeAllClick) {
-            Text(text = "See all", color = Color(0xFF1E88E5), fontSize = 14.sp)
+        onSeeAll?.let {
+            TextButton(onClick = it) {
+                Text("See all", color = MaterialTheme.colorScheme.primary)
+            }
         }
     }
 }
 
 @Composable
-fun BrandIconPlaceholder() {
-    Box(
-        modifier = Modifier
-            .size(70.dp)
-            .background(Color.White, shape = RoundedCornerShape(12.dp)),
-        contentAlignment = Alignment.Center
+fun BrandItem(brand: CarBrand) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        tonalElevation = 4.dp,
+        modifier = Modifier.size(80.dp)
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "Car Brand",
-            tint = Color.Gray,
-            modifier = Modifier.size(36.dp)
-        )
+        Box(contentAlignment = Alignment.Center) {
+            Text(
+                text = brand.name.take(2).uppercase(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CarCardPlaceholder(title: String, price: String) {
+fun CarCard(car: Car, onClick: () -> Unit) {
     Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        onClick = onClick,
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         modifier = Modifier
-            .width(220.dp)
-            .height(180.dp)
+            .width(240.dp)
+            .height(200.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(12.dp)
-        ) {
-            // Placeholder car image
-            Box(
+        Column {
+            AsyncImage(
+                model = car.imageUrl,
+                contentDescription = car.name,
+                placeholder = painterResource(id = R.drawable.ic_launcher_foreground), // create this drawable
+                error = painterResource(id = R.drawable.ic_launcher_foreground),
+                fallback = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp)
-                    .background(Color.LightGray, RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_launcher_background),
-                    contentDescription = null,
-                    tint = Color.DarkGray,
-                    modifier = Modifier.size(64.dp)
+                    .height(120.dp)
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            )
+
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = car.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "${car.pricePerDay}/day",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium
                 )
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                color = Color.Black,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(text = price, color = Color(0xFF1E88E5), fontSize = 14.sp)
         }
     }
 }
 
 @Composable
-fun OfferCardPlaceholder() {
+fun OfferCard(title: String, subtitle: String, onClick: () -> Unit) {
     Card(
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF1E88E5)),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp)
+        onClick = onClick,
+        shape = RoundedCornerShape(24.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+                .fillMaxWidth()
+                .height(140.dp)
+                .padding(24.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
                 Text(
-                    text = "Limited Offer!",
-                    fontSize = 22.sp,
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Get 20% off on all SUVs this week",
-                    fontSize = 16.sp,
-                    color = Color.White
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f)
                 )
             }
-
             Icon(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                imageVector = androidx.compose.material.icons.Icons.Default.ShoppingCart,
                 contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(50.dp)
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.size(56.dp)
             )
         }
     }
 }
 
-@Preview
-@Composable
-fun HomeScreenPreview(){
-    HomeScreen()
-}
+// Dummy Data (replace later with ViewModel)
+data class CarBrand(val name: String)
+data class Car(
+    val id: Int,
+    val name: String,
+    val pricePerDay: String,
+    val imageUrl: String? = null
+)
+
+private val dummyBrands = listOf(
+    CarBrand("Tesla"), CarBrand("BMW"), CarBrand("Mercedes"),
+    CarBrand("Audi"), CarBrand("Toyota"), CarBrand("Honda")
+)
+
+private val dummyTopCars = listOf(
+    Car(1, "Tesla Model 3", "$80"),
+    Car(2, "Porsche 911", "$250"),
+    Car(3, "Lamborghini Huracan", "$450"),
+    Car(4, "BMW M4", "$180"),
+    Car(5, "Audi RS7", "$200")
+)
+
+private val dummyAvailableCars = listOf(
+    Car(6, "Toyota Camry", "$45"),
+    Car(7, "Honda Civic", "$40"),
+    Car(8, "Mercedes E-Class", "$120"),
+    Car(9, "BMW X5", "$150"),
+    Car(10, "Range Rover", "$300")
+)
