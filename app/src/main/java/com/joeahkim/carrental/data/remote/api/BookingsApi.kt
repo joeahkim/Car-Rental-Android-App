@@ -5,6 +5,6 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 
 interface BookingsApi {
-    @GET("Bookings")
+    @GET("api/v1/bookings")
     suspend fun getBookings(@Header("Authorization") token: String): List<BookingDto>
 }
