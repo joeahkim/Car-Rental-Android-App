@@ -1,4 +1,3 @@
-// ui/home/HomeScreen.kt
 package com.joeahkim.carrental.ui.home
 
 import androidx.compose.foundation.background
@@ -11,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,23 +20,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.joeahkim.carrental.R
+import com.joeahkim.carrental.domain.model.AvailableCars
+import com.joeahkim.carrental.ui.bookings.BookingItem
+import com.joeahkim.carrental.ui.bookings.BookingsViewModel
 
 @Composable
 fun HomeScreen(
+    viewModel: HomeViewModel = hiltViewModel(),
     clientName: String = "Joeahkim",
     onSeeAllTopCars: () -> Unit = {},
     onSeeAllAvailableCars: () -> Unit = {},
-    onCarClick: (Car) -> Unit = {},
+    onCarClick: (AvailableCars) -> Unit = {},
     onOfferClick: () -> Unit = {}
 ) {
+
+    val homeState = viewModel.uiState.collectAsState().value
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colorScheme.surface)
-            .statusBarsPadding()           // Edge-to-edge ready
+            .statusBarsPadding()
             .padding(horizontal = 16.dp)
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -65,25 +72,38 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        SectionTitle(title = "Top Cars", onSeeAll = onSeeAllTopCars)
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(dummyTopCars) { car ->
-                CarCard(car = car, onClick = { onCarClick(car) })
-            }
-        }
+//        SectionTitle(title = "Top Cars", onSeeAll = onSeeAllTopCars)
+//        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+//            items(dummyTopCars) { car ->
+//                CarCard(car = car, onClick = { onCarClick(car) })
+//            }
+//        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
         SectionTitle(title = "Available Cars", onSeeAll = onSeeAllAvailableCars)
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(dummyAvailableCars) { car ->
-                CarCard(car = car, onClick = { onCarClick(car) })
+
+        when {
+            homeState.isLoading -> {
+                LoadingAvailableCars()
+            }
+            homeState.error != null -> {
+                ErrorState(message = homeState.error)
+            }
+            homeState.availableCars.isEmpty() -> {
+                EmptyAvailableCars()
+            }
+            else -> {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    items(homeState.availableCars, key = { it.id }) { car ->
+                        AvailableCarCard(car = car, onClick = { onCarClick(car) })
+                    }
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Special Offers
         SectionTitle(title = "Special Offers")
         OfferCard(
             title = "Limited Time Offer!",
@@ -221,7 +241,6 @@ fun OfferCard(title: String, subtitle: String, onClick: () -> Unit) {
     }
 }
 
-// Dummy Data (replace later with ViewModel)
 data class CarBrand(val name: String)
 data class Car(
     val id: Int,
@@ -250,3 +269,102 @@ private val dummyAvailableCars = listOf(
     Car(9, "BMW X5", "$150"),
     Car(10, "Range Rover", "$300")
 )
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AvailableCarCard(car: AvailableCars, onClick: () -> Unit) {
+    Card(
+        onClick = onClick,
+        shape = RoundedCornerShape(20.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        modifier = Modifier.width(260.dp)
+    ) {
+        Column {
+            AsyncImage(
+                model = car.carImageUrl,
+                contentDescription = car.carName,
+                placeholder = painterResource(R.drawable.ic_launcher_foreground), // add a placeholder
+                error = painterResource(R.drawable.ic_launcher_foreground),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+            )
+
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = car.carName,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "KSh ${car.price}/day",  // or "$ ${car.price}"
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Optional: Add rating or features later
+            }
+        }
+    }
+}
+
+@Composable
+fun LoadingAvailableCars() {
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+        items(5) {
+            Card(
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier
+                    .width(260.dp)
+                    .height(220.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EmptyAvailableCars() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(220.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "No cars available at the moment",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+}
+
+@Composable
+fun ErrorState(message: String?) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(220.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = message ?: "Something went wrong",
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+}

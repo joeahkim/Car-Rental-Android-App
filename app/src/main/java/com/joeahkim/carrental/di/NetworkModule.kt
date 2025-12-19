@@ -4,6 +4,7 @@ package com.joeahkim.carrental.di
 import com.joeahkim.carrental.data.remote.ApiService
 import com.joeahkim.carrental.data.remote.ProfileApiService
 import com.joeahkim.carrental.data.remote.api.BookingsApi
+import com.joeahkim.carrental.data.remote.api.HomeScreenApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,4 +53,10 @@ object NetworkModule {
     @Singleton
     fun provideBookingsApi(retrofit: Retrofit): BookingsApi =
         retrofit.create(BookingsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideHomeScreenApi(retrofit: Retrofit): HomeScreenApi =
+        retrofit.create(HomeScreenApi::class.java)
+
 }
