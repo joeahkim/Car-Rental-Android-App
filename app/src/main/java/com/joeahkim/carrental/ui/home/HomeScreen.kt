@@ -24,8 +24,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.joeahkim.carrental.R
 import com.joeahkim.carrental.domain.model.AvailableCars
-import com.joeahkim.carrental.ui.bookings.BookingItem
-import com.joeahkim.carrental.ui.bookings.BookingsViewModel
 
 @Composable
 fun HomeScreen(
@@ -72,12 +70,22 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-//        SectionTitle(title = "Top Cars", onSeeAll = onSeeAllTopCars)
-//        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-//            items(dummyTopCars) { car ->
-//                CarCard(car = car, onClick = { onCarClick(car) })
-//            }
-//        }
+        SectionTitle(title = "Top Cars", onSeeAll = onSeeAllTopCars)
+
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            items(homeState.topCars, key = { it.id }) { car ->
+                CarCard(
+                    car = Car(
+                        id = car.id,
+                        name = car.name,
+                        pricePerDay = "KSh ${car.pricePerDay}",
+                        imageUrl = car.imageUrl
+                    ),
+                    onClick = { /* navigate to car details */ }
+                )
+            }
+        }
+
 
         Spacer(modifier = Modifier.height(32.dp))
 

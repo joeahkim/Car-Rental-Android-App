@@ -22,10 +22,10 @@ class HomeViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        loadAvailableCars()
+        loadData()
     }
 
-    private fun loadAvailableCars() {
+    private fun loadData() {
         viewModelScope.launch {
             val token = dataStoreManager.getToken().firstOrNull()
 
@@ -39,11 +39,12 @@ class HomeViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, error = null) }
 
             getHomeScreenUseCase(token)
-                .onSuccess { cars ->
+                .onSuccess { data ->
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            availableCars = cars
+                            availableCars = data.availableCars,
+                            topCars = data.topCars
                         )
                     }
                 }
