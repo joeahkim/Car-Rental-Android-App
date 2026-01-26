@@ -31,7 +31,7 @@ fun HomeScreen(
     clientName: String = "Joeahkim",
     onSeeAllTopCars: () -> Unit = {},
     onSeeAllAvailableCars: () -> Unit = {},
-    onCarClick: (AvailableCars) -> Unit = {},
+    onCarClick: (Int) -> Unit = {},
     onOfferClick: () -> Unit = {}
 ) {
 
@@ -81,7 +81,7 @@ fun HomeScreen(
                         pricePerDay = "KSh ${car.pricePerDay}",
                         imageUrl = car.imageUrl
                     ),
-                    onClick = { /* navigate to car details */ }
+                    onClick = { onCarClick(car.id) }
                 )
             }
         }
@@ -104,7 +104,7 @@ fun HomeScreen(
             else -> {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     items(homeState.availableCars, key = { it.id }) { car ->
-                        AvailableCarCard(car = car, onClick = { onCarClick(car) })
+                        AvailableCarCard(car = car, onClick = { onCarClick(car.id.toInt()) })
                     }
                 }
             }

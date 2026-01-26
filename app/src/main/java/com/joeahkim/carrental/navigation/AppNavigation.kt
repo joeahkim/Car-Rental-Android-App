@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.joeahkim.carrental.ui.main.MainScreen   // ← Use MainScreen, not MainHome
+import com.joeahkim.carrental.ui.main.MainScreen
 import com.joeahkim.carrental.ui.login.LoginScreen
 import com.joeahkim.carrental.ui.login.SignUpScreen
 
@@ -34,7 +34,7 @@ fun AppNavigation() {
             )
         }
         composable<Routes.Main> {
-            MainScreen()   // ← This is your new smooth bottom nav screen
+            MainScreen()
         }
     }
 }
