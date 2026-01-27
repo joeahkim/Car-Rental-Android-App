@@ -2,6 +2,8 @@ package com.joeahkim.carrental.di
 
 import com.joeahkim.carrental.data.repository.BookingsRepository
 import com.joeahkim.carrental.data.repository.BookingsRepositoryImpl
+import com.joeahkim.carrental.data.repository.CarRepository
+import com.joeahkim.carrental.data.repository.CarRepositoryImpl
 import com.joeahkim.carrental.data.repository.HomeScreenRepository
 import com.joeahkim.carrental.data.repository.HomeScreenRepositoryImpl
 import dagger.Module
@@ -23,4 +25,10 @@ object RepositoryModule {
     fun provideHomeScreenRepository(
         impl: HomeScreenRepositoryImpl
     ): HomeScreenRepository = impl
+
+    @Provides
+    @Singleton
+    fun provideCarRepository(
+        impl: CarRepositoryImpl
+    ): CarRepository = impl
 }
