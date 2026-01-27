@@ -2,6 +2,7 @@ package com.joeahkim.carrental.domain.model
 
 data class Booking(
     val id: String,
+    val carId: String,
     val carName: String,
     val pickupDate: String,
     val returnDate: String,

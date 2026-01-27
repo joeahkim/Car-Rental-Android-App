@@ -24,7 +24,10 @@ import coil.compose.AsyncImage
 import com.joeahkim.carrental.domain.model.BookingStatus
 
 @Composable
-fun BookingsScreen(viewModel: BookingsViewModel = hiltViewModel()) {
+fun BookingsScreen(
+    viewModel: BookingsViewModel = hiltViewModel(),
+    onCarClick: (Int) -> Unit = {}
+) {
     val state = viewModel.uiState.collectAsState().value
 
     Column(
@@ -35,7 +38,6 @@ fun BookingsScreen(viewModel: BookingsViewModel = hiltViewModel()) {
             .padding(16.dp)
     ) {
 
-
         Text(
             text = "My Bookings",
             style = MaterialTheme.typography.headlineMedium,
@@ -44,20 +46,21 @@ fun BookingsScreen(viewModel: BookingsViewModel = hiltViewModel()) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Row(modifier = Modifier
-            .fillMaxWidth()){
-            Row (
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Row(
                 modifier = Modifier
                     .fillMaxWidth(0.48f)
                     .height(100.dp)
-                    .background(color = Color.Red,
-                        RoundedCornerShape(24.dp)),
+                    .background(
+                        color = Color.Red,
+                        RoundedCornerShape(24.dp)
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
-            ){
-                Column (
+            ) {
+                Column(
                     horizontalAlignment = Alignment.CenterHorizontally
-                ){
+                ) {
                     Text(
                         text = "Total Bookings",
                         color = Color.White,
@@ -65,7 +68,7 @@ fun BookingsScreen(viewModel: BookingsViewModel = hiltViewModel()) {
                         style = MaterialTheme.typography.titleLarge
                     )
                     Text(
-                        text = "3",
+                        text = state.bookings.size.toString(), // Dynamic count
                         textAlign = TextAlign.End,
                         color = Color.White,
                         fontWeight = FontWeight.ExtraBold,
@@ -78,14 +81,16 @@ fun BookingsScreen(viewModel: BookingsViewModel = hiltViewModel()) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp)
-                    .background(color = Color(0xFF00695C),
-                        RoundedCornerShape(24.dp)),
+                    .background(
+                        color = Color(0xFF00695C),
+                        RoundedCornerShape(24.dp)
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Column (
+                Column(
                     horizontalAlignment = Alignment.CenterHorizontally
-                ){
+                ) {
                     Text(
                         text = "Favorite Car",
                         color = Color.White,
@@ -100,7 +105,6 @@ fun BookingsScreen(viewModel: BookingsViewModel = hiltViewModel()) {
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-
             }
         }
 
@@ -125,7 +129,10 @@ fun BookingsScreen(viewModel: BookingsViewModel = hiltViewModel()) {
             else -> {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     items(state.bookings) { booking ->
-                        BookingItem(booking = booking)
+                        BookingItem(
+                            booking = booking,
+                            onCarClick = onCarClick
+                        )
                     }
                 }
             }
@@ -135,9 +142,12 @@ fun BookingsScreen(viewModel: BookingsViewModel = hiltViewModel()) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookingItem(booking: com.joeahkim.carrental.domain.model.Booking) {
+fun BookingItem(
+    booking: com.joeahkim.carrental.domain.model.Booking,
+    onCarClick: (Int) -> Unit = {}
+) {
     Card(
-        onClick = { /* Navigate to booking details later */ },
+        onClick = { onCarClick(booking.carId.toInt()) },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
@@ -156,11 +166,19 @@ fun BookingItem(booking: com.joeahkim.carrental.domain.model.Booking) {
             Spacer(modifier = Modifier.width(16.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(booking.carName, fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    booking.carName,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium
+                )
                 Text("Pickup: ${booking.pickupDate}", style = MaterialTheme.typography.bodyMedium)
                 Text("Return: ${booking.returnDate}", style = MaterialTheme.typography.bodyMedium)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(booking.totalPrice, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
+                Text(
+                    booking.totalPrice,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
 
             Spacer(modifier = Modifier.width(16.dp))

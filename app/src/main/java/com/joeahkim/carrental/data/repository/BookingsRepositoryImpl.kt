@@ -16,6 +16,7 @@ class BookingsRepositoryImpl @Inject constructor(
             Booking(
                 id = dto.id,
                 carName = dto.car_name,
+                carId = dto.carId,
                 carImageUrl = dto.car_image_url,
                 pickupDate = dto.pickup_date,
                 returnDate = dto.return_date,

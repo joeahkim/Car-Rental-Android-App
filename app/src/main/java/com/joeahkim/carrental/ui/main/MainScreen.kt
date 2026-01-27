@@ -173,7 +173,11 @@ fun MainScreen() {
             }
 
             composable<Routes.Bookings> {
-                BookingsScreen()
+                BookingsScreen(
+                    onCarClick = { carId ->
+                        navController.navigate(Screen.CarDetails.createRoute(carId))
+                    }
+                )
             }
 
             composable<Routes.Profile> {

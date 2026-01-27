@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class BookingDto(
     val id: String,
+    val carId: String,
     val car_name: String,
     val car_image_url: String? = null,
     val pickup_date: String,
