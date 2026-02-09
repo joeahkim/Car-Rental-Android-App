@@ -11,10 +11,12 @@ class GetHomeScreenUseCase @Inject constructor(
         return runCatching {
             val availableCars = repository.getAvailableCars(token).getOrThrow()
             val topCars = repository.getTopCars(token).getOrThrow()
+            val brands = repository.getBrands(token).getOrThrow()
 
             HomeScreenData(
                 availableCars = availableCars,
-                topCars = topCars
+                topCars = topCars,
+                brands = brands
             )
         }
     }

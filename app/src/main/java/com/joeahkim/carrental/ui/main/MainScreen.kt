@@ -49,7 +49,6 @@ fun MainScreen() {
             showBottomBarDelayed = true
             isTransitioning = false
         } else {
-            // Hide immediately when going to CarDetails
             showBottomBarDelayed = false
             isTransitioning = false
         }

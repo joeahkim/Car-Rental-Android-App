@@ -1,6 +1,7 @@
 package com.joeahkim.carrental.data.repository
 
 import com.joeahkim.carrental.domain.model.AvailableCars
+import com.joeahkim.carrental.domain.model.Brand
 import com.joeahkim.carrental.data.remote.api.HomeScreenApi
 import com.joeahkim.carrental.domain.model.TopCars
 import javax.inject.Inject
@@ -29,6 +30,16 @@ class HomeScreenRepositoryImpl @Inject constructor(
                 pricePerDay = dto.pricePerDay,
                 imageUrl = dto.imageUrl,
                 bookingsCount = dto.bookingsCount
+            )
+        }
+    }
+
+    override suspend fun getBrands(token: String): Result<List<Brand>> = runCatching {
+        api.getBrands("Bearer $token").map { dto ->
+            Brand(
+                id = dto.id,
+                name = dto.name,
+                logoUrl = dto.logoUrl
             )
         }
     }

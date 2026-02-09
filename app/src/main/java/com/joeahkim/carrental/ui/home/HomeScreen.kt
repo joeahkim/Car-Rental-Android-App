@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.joeahkim.carrental.R
 import com.joeahkim.carrental.domain.model.AvailableCars
+import com.joeahkim.carrental.domain.model.Brand
 
 @Composable
 fun HomeScreen(
@@ -47,7 +48,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Hi, $clientName",
+            text = "Hi, ${homeState.clientName}",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
@@ -63,7 +64,7 @@ fun HomeScreen(
 
         SectionTitle(title = "Car Brands")
         LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(dummyBrands) { brand ->
+            items(homeState.brands) { brand ->
                 BrandItem(brand = brand)
             }
         }
@@ -145,7 +146,7 @@ private fun SectionTitle(title: String, onSeeAll: (() -> Unit)? = null) {
 }
 
 @Composable
-fun BrandItem(brand: CarBrand) {
+fun BrandItem(brand: Brand) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surfaceVariant,
@@ -153,12 +154,23 @@ fun BrandItem(brand: CarBrand) {
         modifier = Modifier.size(80.dp)
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Text(
-                text = brand.name.take(2).uppercase(),
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
+            if (!brand.logoUrl.isNullOrEmpty()) {
+                AsyncImage(
+                    model = brand.logoUrl,
+                    contentDescription = brand.name,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                )
+            } else {
+                Text(
+                    text = brand.name.take(2).uppercase(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }
@@ -249,7 +261,6 @@ fun OfferCard(title: String, subtitle: String, onClick: () -> Unit) {
     }
 }
 
-data class CarBrand(val name: String)
 data class Car(
     val id: Int,
     val name: String,
@@ -257,10 +268,6 @@ data class Car(
     val imageUrl: String? = null
 )
 
-private val dummyBrands = listOf(
-    CarBrand("Tesla"), CarBrand("BMW"), CarBrand("Mercedes"),
-    CarBrand("Audi"), CarBrand("Toyota"), CarBrand("Honda")
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
