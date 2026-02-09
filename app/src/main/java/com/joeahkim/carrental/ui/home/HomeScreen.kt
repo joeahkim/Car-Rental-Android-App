@@ -28,7 +28,7 @@ import com.joeahkim.carrental.domain.model.AvailableCars
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    clientName: String = "Joeahkim",
+    clientName: String = "",
     onSeeAllTopCars: () -> Unit = {},
     onSeeAllAvailableCars: () -> Unit = {},
     onCarClick: (Int) -> Unit = {},
@@ -47,7 +47,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Hi, $clientName 👋",
+            text = "Hi, $clientName",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
@@ -260,22 +260,6 @@ data class Car(
 private val dummyBrands = listOf(
     CarBrand("Tesla"), CarBrand("BMW"), CarBrand("Mercedes"),
     CarBrand("Audi"), CarBrand("Toyota"), CarBrand("Honda")
-)
-
-private val dummyTopCars = listOf(
-    Car(1, "Tesla Model 3", "$80"),
-    Car(2, "Porsche 911", "$250"),
-    Car(3, "Lamborghini Huracan", "$450"),
-    Car(4, "BMW M4", "$180"),
-    Car(5, "Audi RS7", "$200")
-)
-
-private val dummyAvailableCars = listOf(
-    Car(6, "Toyota Camry", "$45"),
-    Car(7, "Honda Civic", "$40"),
-    Car(8, "Mercedes E-Class", "$120"),
-    Car(9, "BMW X5", "$150"),
-    Car(10, "Range Rover", "$300")
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
