@@ -61,8 +61,7 @@ fun HomeScreen(
     ) {
         Column(
             modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
                 .padding(horizontal = 24.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -88,7 +87,15 @@ fun HomeScreen(
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+        }
 
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp)
+        ) {
             // 4. Popular Car (Top Cars)
             SectionTitle(title = "Popular Car", onSeeAll = onSeeAllTopCars)
             
@@ -142,8 +149,7 @@ fun HomeScreen(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            
-            // Available Cars Section (Optional based on design, but keeping for functionality)
+
              if (homeState.availableCars.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 SectionTitle(title = "Available Cars", onSeeAll = onSeeAllAvailableCars)
@@ -156,7 +162,7 @@ fun HomeScreen(
             }
 
 
-            Spacer(modifier = Modifier.height(100.dp)) // Bottom padding for nav bar
+            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }
@@ -174,9 +180,8 @@ fun HomeHeader(clientName: String) {
                 color = Color.Gray,
                 modifier = Modifier.size(50.dp)
             ) {
-                // Placeholder for User Avatar
                  Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground), // Replace with actual avatar
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
                     contentDescription = "User Avatar",
                     contentScale = ContentScale.Crop
                 )
@@ -184,13 +189,13 @@ fun HomeHeader(clientName: String) {
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(
-                    text = "Welcome \uD83D\uDC4B", // Waving hand emoji
-                    style = MaterialTheme.typography.bodySmall,
+                    text = "Welcome",
+                    style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
                 Text(
                     text = clientName.ifEmpty { "Guest" },
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
@@ -250,7 +255,7 @@ fun SearchBar() {
         
         Surface(
             shape = RoundedCornerShape(16.dp),
-            color = Color.Black, // Dark background for filter button
+            color = Color.Black,
             modifier = Modifier.size(50.dp)
         ) {
             IconButton(onClick = { /* TODO */ }) {
@@ -293,7 +298,7 @@ fun BrandItem(brand: Brand) {
     ) {
         Surface(
             shape = CircleShape,
-            color = if (brand.name == "Tesla") Color.Black else Color.White, // Example: Highlight selected or specific brand
+            color = if (brand.name == "Tesla") Color.Black else Color.White,
             modifier = Modifier.size(64.dp),
             shadowElevation = 0.dp,
             border = if (brand.name != "Tesla") androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFE0E0E0)) else null
@@ -339,7 +344,7 @@ fun CarCard(car: Car, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp) // Adjusted height
+            .height(200.dp)
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
@@ -347,24 +352,22 @@ fun CarCard(car: Car, onClick: () -> Unit) {
                     .fillMaxSize()
                     .padding(12.dp)
             ) {
-                // Heart Icon
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.TopStart
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Favorite, // Or FavoriteBorder
+                        imageVector = Icons.Default.Favorite,
                         contentDescription = "Favorite",
                         tint = Color.Black, 
                         modifier = Modifier.size(20.dp)
                     )
                 }
-                
-                // Car Image
+
                 AsyncImage(
                     model = car.imageUrl,
                     contentDescription = car.name,
-                    contentScale = ContentScale.Fit, // Fit to show whole car
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(80.dp)
@@ -373,7 +376,6 @@ fun CarCard(car: Car, onClick: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Car Name
                 Text(
                     text = car.name,
                     style = MaterialTheme.typography.titleMedium,
@@ -389,25 +391,23 @@ fun CarCard(car: Car, onClick: () -> Unit) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Price
                     Text(
                         text = car.pricePerDay,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black
                     )
-                    
-                    // Rating
+
                     Row(verticalAlignment = Alignment.CenterVertically) {
                          Icon(
-                            painter = painterResource(id = android.R.drawable.star_on), // Use system star or add one
+                            painter = painterResource(id = android.R.drawable.star_on),
                             contentDescription = "Rating",
                             tint = Color(0xFFFFD700), // Gold
                             modifier = Modifier.size(14.dp)
                         )
                         Spacer(modifier = Modifier.width(2.dp))
                         Text(
-                            text = "4.5", // Hardcoded for now as per design
+                            text = "4.5",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
