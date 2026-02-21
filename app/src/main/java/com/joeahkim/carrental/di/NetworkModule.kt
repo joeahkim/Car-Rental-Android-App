@@ -6,6 +6,7 @@ import com.joeahkim.carrental.data.remote.ProfileApiService
 import com.joeahkim.carrental.data.remote.api.BookingsApi
 import com.joeahkim.carrental.data.remote.api.CarDetailsApi
 import com.joeahkim.carrental.data.remote.api.HomeScreenApi
+import com.joeahkim.carrental.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,10 +36,11 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
-            .baseUrl("http://192.168.8.13:8000/")
+            .baseUrl(Constants.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+
 
     @Provides
     @Singleton

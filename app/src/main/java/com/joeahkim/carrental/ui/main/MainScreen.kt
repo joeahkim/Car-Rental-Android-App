@@ -4,12 +4,17 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
@@ -37,98 +42,14 @@ fun MainScreen() {
         BottomNavItem.Profile
     )
 
-    val showBottomBar = currentDestination?.route?.contains("car-details") != true
+    val isOnCarDetails = currentDestination?.route?.contains("car-details") == true
 
-    var showBottomBarDelayed by remember { mutableStateOf(showBottomBar) }
-    var isTransitioning by remember { mutableStateOf(false) }
-
-    LaunchedEffect(showBottomBar) {
-        if (showBottomBar) {
-            isTransitioning = true
-            kotlinx.coroutines.delay(300)
-            showBottomBarDelayed = true
-            isTransitioning = false
-        } else {
-            showBottomBarDelayed = false
-            isTransitioning = false
-        }
-    }
-
-    Scaffold(
-        bottomBar = {
-            if (showBottomBarDelayed) {
-                AnimatedVisibility(
-                    visible = showBottomBarDelayed,
-                    enter = slideInVertically(
-                        initialOffsetY = { it },
-                        animationSpec = tween(durationMillis = 200)
-                    ) + fadeIn(animationSpec = tween(durationMillis = 200)),
-                    exit = slideOutVertically(
-                        targetOffsetY = { it },
-                        animationSpec = tween(durationMillis = 200)
-                    ) + fadeOut(animationSpec = tween(durationMillis = 200))
-                ) {
-                    NavigationBar(containerColor = Color(0xFF0A0E21)) {
-                        bottomNavItems.forEach { item ->
-                            val isSelected = currentDestination?.route?.let { route ->
-                                when (item.route) {
-                                    is Routes.Home -> route.contains("Home", ignoreCase = true)
-                                    is Routes.Bookings -> route.contains("Bookings", ignoreCase = true)
-                                    is Routes.Profile -> route.contains("Profile", ignoreCase = true)
-                                    else -> false
-                                }
-                            } ?: false
-
-                            NavigationBarItem(
-                                selected = isSelected,
-                                onClick = {
-                                    navController.navigate(item.route) {
-                                        popUpTo<Routes.Home> {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                },
-                                icon = {
-                                    Icon(
-                                        imageVector = item.icon,
-                                        contentDescription = item.title,
-                                        tint = if (isSelected) Color.White else Color.Gray
-                                    )
-                                },
-                                label = {
-                                    Text(
-                                        text = item.title,
-                                        color = if (isSelected) Color.White else Color.Gray,
-                                        fontSize = 12.sp
-                                    )
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    ) { padding ->
-
-        if (isTransitioning) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
+    Box(modifier = Modifier.fillMaxSize()) {
 
         NavHost(
             navController = navController,
             startDestination = Routes.Home,
-            modifier = Modifier.padding(padding),
+            modifier = Modifier.fillMaxSize(),
             enterTransition = {
                 if (targetState.destination.route?.contains("car-details") == true) {
                     slideInHorizontally(
@@ -136,30 +57,32 @@ fun MainScreen() {
                         animationSpec = tween(300)
                     ) + fadeIn(animationSpec = tween(300))
                 } else {
-                    fadeIn(animationSpec = tween(200))
+                    EnterTransition.None
                 }
             },
             exitTransition = {
+                if (targetState.destination.route?.contains("car-details") == true) {
+                    fadeOut(animationSpec = tween(300))
+                } else {
+                    ExitTransition.None
+                }
+            },
+            popEnterTransition = {
+                if (initialState.destination.route?.contains("car-details") == true) {
+                    fadeIn(animationSpec = tween(300))
+                } else {
+                    EnterTransition.None
+                }
+            },
+            popExitTransition = {
                 if (initialState.destination.route?.contains("car-details") == true) {
                     slideOutHorizontally(
                         targetOffsetX = { it },
                         animationSpec = tween(300)
                     ) + fadeOut(animationSpec = tween(300))
                 } else {
-                    fadeOut(animationSpec = tween(200))
+                    ExitTransition.None
                 }
-            },
-            popEnterTransition = {
-                slideInHorizontally(
-                    initialOffsetX = { -it / 3 },
-                    animationSpec = tween(300)
-                ) + fadeIn(animationSpec = tween(300))
-            },
-            popExitTransition = {
-                slideOutHorizontally(
-                    targetOffsetX = { it },
-                    animationSpec = tween(200)
-                ) + fadeOut(animationSpec = tween(200))
             }
         ) {
 
@@ -196,6 +119,84 @@ fun MainScreen() {
                     carId = carId,
                     onBack = { navController.popBackStack() }
                 )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = !isOnCarDetails,
+            enter = slideInVertically { it } + fadeIn(),
+            exit = slideOutVertically { it } + fadeOut(),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(24.dp),
+                    color = Color(0xFF0A0E21),
+                    tonalElevation = 8.dp,
+                    shadowElevation = 8.dp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp)
+                ) {
+                    NavigationBar(
+                        containerColor = Color.Transparent,
+                        tonalElevation = 0.dp,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        bottomNavItems.forEach { item ->
+                            val isSelected = currentDestination?.route?.let { route ->
+                                when (item.route) {
+                                    is Routes.Home -> route.contains("Home", ignoreCase = true)
+                                    is Routes.Bookings -> route.contains("Bookings", ignoreCase = true)
+                                    is Routes.Profile -> route.contains("Profile", ignoreCase = true)
+                                    else -> false
+                                }
+                            } ?: false
+
+                            NavigationBarItem(
+                                selected = isSelected,
+                                onClick = {
+                                    navController.navigate(item.route) {
+                                        popUpTo<Routes.Home> {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                icon = {
+                                    Icon(
+                                        imageVector = item.icon,
+                                        contentDescription = item.title,
+                                        tint = if (isSelected) Color.White else Color.Gray
+                                    )
+                                },
+                                label = {
+                                    if (isSelected) {
+                                        Text(
+                                            text = item.title,
+                                            color = Color.White,
+                                            fontSize = 12.sp
+                                        )
+                                    }
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    indicatorColor = Color.Transparent,
+                                    selectedIconColor = Color.White,
+                                    unselectedIconColor = Color.Gray,
+                                    selectedTextColor = Color.White,
+                                    unselectedTextColor = Color.Gray
+                                )
+                            )
+                        }
+                    }
+                }
             }
         }
     }

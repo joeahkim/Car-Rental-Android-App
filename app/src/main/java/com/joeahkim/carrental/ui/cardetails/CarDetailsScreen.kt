@@ -1,12 +1,17 @@
 package com.joeahkim.carrental.ui.cardetails
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Speed
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,10 +19,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.joeahkim.carrental.R
@@ -35,57 +43,22 @@ fun CarDetailsScreen(
         viewModel.loadCarDetails(carId)
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Car Details") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                }
-            )
-        },
-        bottomBar = {
-            if (uiState.carDetail != null) {
-                Button(
-                    onClick = { /* book car later */ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text("Book This Car - KSh ${uiState.carDetail.pricePerDay}/day")
-                }
-            }
-        }
-    ) { padding ->
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF212121)) // Dark background for top part
+    ) {
         when {
             uiState.isLoading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = Color.White)
                 }
             }
 
             uiState.error != null -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    contentAlignment = Alignment.Center
-                ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = uiState.error,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(text = uiState.error, color = Color.White)
                         Button(onClick = { viewModel.loadCarDetails(carId) }) {
                             Text("Retry")
                         }
@@ -94,100 +67,215 @@ fun CarDetailsScreen(
             }
 
             uiState.carDetail != null -> {
-                CarDetailsContent(
-                    carDetail = uiState.carDetail,
-                    modifier = Modifier.padding(padding)
-                )
-            }
-        }
-    }
-}
+                val car = uiState.carDetail
 
-@Composable
-fun CarDetailsContent(
-    carDetail: com.joeahkim.carrental.domain.model.CarDetail,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        // Car Image
-        AsyncImage(
-            model = carDetail.imageUrl,
-            contentDescription = "${carDetail.make} ${carDetail.model}",
-            placeholder = painterResource(R.drawable.ic_launcher_foreground),
-            error = painterResource(R.drawable.ic_launcher_foreground),
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-        )
-
-        // Car Details
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
-        ) {
-            Text(
-                text = "${carDetail.make} ${carDetail.model}",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "KSh ${carDetail.pricePerDay}/day",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Details Card
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
-            ) {
+                // 1. Header & Car Image (Top Half)
                 Column(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 40.dp, start = 16.dp, end = 16.dp)
                 ) {
-                    DetailRow(label = "Make", value = carDetail.make)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    DetailRow(label = "Model", value = carDetail.model)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    DetailRow(label = "Number Plate", value = carDetail.numberPlate)
-                    Spacer(modifier = Modifier.height(12.dp))
-                    DetailRow(label = "Price per Day", value = "KSh ${carDetail.pricePerDay}")
+                    // Header
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = Color.White
+                            )
+                        }
+                        Text(
+                            text = "Car Details",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.White,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        IconButton(onClick = { /* TODO: Toggle favorite */ }) {
+                            Icon(
+                                imageVector = Icons.Default.FavoriteBorder, // Or Favorite if selected
+                                contentDescription = "Favorite",
+                                tint = Color.White
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    // Car Image
+                    AsyncImage(
+                        model = car.imageUrl,
+                        contentDescription = "${car.make} ${car.model}",
+                        placeholder = painterResource(R.drawable.ic_launcher_foreground),
+                        error = painterResource(R.drawable.ic_launcher_foreground),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(220.dp)
+                    )
+                }
+
+                // 2. Bottom Sheet Details
+                // We use a Box with alignment BottomCenter to simulate the sheet
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.55f), // Occupy bottom 55%
+                        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                        color = Color.White
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(24.dp)
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            // Title & Rating
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "${car.make} ${car.model}",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.Black
+                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        painter = painterResource(id = android.R.drawable.star_on),
+                                        contentDescription = "Rating",
+                                        tint = Color(0xFFFFD700), // Gold
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = "(4.5)", // Hardcoded rating as per design
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.Gray
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Description
+                            Text(
+                                text = "${car.make} ${car.model} is a high-performance vehicle designed for comfort and speed. It features advanced safety systems and a luxurious interior...", // Placeholder description
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color.Gray,
+                                maxLines = 3,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            // "more" text could be added if needed
+
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            // Features
+                            Text(
+                                text = "Features",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                FeatureItem(icon = Icons.Default.Person, title = "6 seats", subtitle = "Total Capacity")
+                                FeatureItem(icon = Icons.Default.Speed, title = "200 KM/H", subtitle = "Highest Speed")
+                                FeatureItem(icon = Icons.Default.Settings, title = "500 HP", subtitle = "Engine Output")
+                            }
+
+                            Spacer(modifier = Modifier.weight(1f)) // Push footer to bottom
+                            Spacer(modifier = Modifier.height(24.dp))
+
+                            // Footer: Price & Buy Button
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column {
+                                    Text(
+                                        text = "Price",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.Gray
+                                    )
+                                    Text(
+                                        text = "KSh ${car.pricePerDay}",
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.Black
+                                    )
+                                }
+
+                                Button(
+                                    onClick = { /* TODO: Book */ },
+                                    shape = RoundedCornerShape(24.dp),
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+                                    modifier = Modifier
+                                        .height(50.dp)
+                                        .width(160.dp)
+                                ) {
+                                    Text("Buy now", color = Color.White)
+                                }
+                            }
+                        }
+                    }
                 }
             }
-
-            Spacer(modifier = Modifier.height(100.dp)) // Space for bottom button
         }
     }
 }
 
 @Composable
-fun DetailRow(label: String, value: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+fun FeatureItem(icon: androidx.compose.ui.graphics.vector.ImageVector, title: String, subtitle: String) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = Color(0xFFF5F5F5), // Light gray background
+        modifier = Modifier
+            .width(100.dp)
+            .height(100.dp)
     ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.SemiBold
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color.Black,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.Gray,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontSize = 10.sp
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelMedium, // Slightly bolder
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+        }
     }
 }

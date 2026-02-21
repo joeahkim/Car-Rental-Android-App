@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -11,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -33,7 +35,11 @@ fun ProfileScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF5F5F5)) // Light gray background
+    ) {
         when {
             error != null -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -43,81 +49,110 @@ fun ProfileScreen(
 
             client == null -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = Color.Black)
                 }
             }
 
             else -> {
                 val profile = client!!
                 Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    // Header Background
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(240.dp)
-                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .height(200.dp)
+                            .background(Color(0xFF212121)) // Dark background
                     ) {
+                        Text(
+                            text = "My Profile",
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(top = 48.dp)
+                        )
+                        
                         Surface(
                             modifier = Modifier
                                 .size(120.dp)
                                 .align(Alignment.BottomCenter)
-                                .offset(y = 45.dp),
+                                .offset(y = 60.dp),
                             shape = CircleShape,
-                            shadowElevation = 8.dp,
-                            color = MaterialTheme.colorScheme.surface
+                            shadowElevation = 4.dp,
+                            color = Color.White
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Person,
                                 contentDescription = "Profile Picture",
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = Color.Gray,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(16.dp)
+                                    .padding(24.dp)
                             )
                         }
                     }
 
                     Spacer(modifier = Modifier.height(70.dp))
+                    
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp),
-                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
                                 text = profile.name,
-                                style = MaterialTheme.typography.headlineLarge,
+                                style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
+                                color = Color.Black
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
                                 text = profile.email,
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                color = Color.Gray
                             )
                         }
 
-                        HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+                        HorizontalDivider(thickness = 1.dp, color = Color(0xFFE0E0E0))
 
-                        ProfileDetailRow(label = "Phone", value = profile.phone_number.toString())
-                        ProfileDetailRow(label = "ID Number", value = profile.id_number.toString())
-                        ProfileDetailRow(label = "Nationality", value = profile.nationality)
-                        ProfileDetailRow(label = "Residence", value = profile.residence)
-                        ProfileDetailRow(label = "Occupation", value = profile.occupation)
-                        ProfileDetailRow(label = "Company", value = profile.company ?: "Not specified")
+                        // Details Card
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(containerColor = Color.White),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(20.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                ProfileDetailRow(label = "Phone", value = profile.phone_number.toString())
+                                ProfileDetailRow(label = "ID Number", value = profile.id_number.toString())
+                                ProfileDetailRow(label = "Nationality", value = profile.nationality)
+                                ProfileDetailRow(label = "Residence", value = profile.residence)
+                                ProfileDetailRow(label = "Occupation", value = profile.occupation)
+                                ProfileDetailRow(label = "Company", value = profile.company ?: "Not specified")
+                            }
+                        }
 
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Button(
                             onClick = onEditProfileClick,
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.medium
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
                         ) {
-                            Text("Edit Profile")
+                            Text("Edit Profile", color = Color.White)
                         }
 
-                        Spacer(modifier = Modifier.height(32.dp))
+                        Spacer(modifier = Modifier.height(100.dp)) // Bottom padding
                     }
                 }
             }
@@ -127,17 +162,21 @@ fun ProfileScreen(
 
 @Composable
 private fun ProfileDetailRow(label: String, value: String) {
-    Column {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.Gray
         )
-        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = value,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = Color.Black
         )
     }
 }
