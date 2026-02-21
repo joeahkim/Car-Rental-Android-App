@@ -23,8 +23,7 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +52,9 @@ fun HomeScreen(
 
     val homeState = viewModel.uiState.collectAsState().value
     
+    var isTopCarsExpanded by remember { mutableStateOf(false) }
+    var isAvailableCarsExpanded by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -97,17 +99,18 @@ fun HomeScreen(
                 .padding(horizontal = 24.dp)
         ) {
             // 4. Popular Car (Top Cars)
-            SectionTitle(title = "Popular Car", onSeeAll = onSeeAllTopCars)
+            SectionTitle(
+                title = "Popular Car",
+                onSeeAll = { isTopCarsExpanded = !isTopCarsExpanded },
+                isExpanded = isTopCarsExpanded
+            )
             
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Using a flow layout or simply a Column of Rows for the grid effect within a scrollable column
-            // Since we are already in a verticalScroll, we can't easily use LazyVerticalGrid.
-            // For now, let's use a Column with Rows to simulate a 2-column grid.
-            val topCars = homeState.topCars
-            val rows = (topCars.size + 1) / 2
+            val topCars = if (isTopCarsExpanded) homeState.topCars else homeState.topCars.take(4)
+            val topCarsRows = (topCars.size + 1) / 2
             
-            for (i in 0 until rows) {
+            for (i in 0 until topCarsRows) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -152,12 +155,59 @@ fun HomeScreen(
 
              if (homeState.availableCars.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
-                SectionTitle(title = "Available Cars", onSeeAll = onSeeAllAvailableCars)
+                SectionTitle(
+                    title = "Available Cars",
+                    onSeeAll = { isAvailableCarsExpanded = !isAvailableCarsExpanded },
+                    isExpanded = isAvailableCarsExpanded
+                )
                 Spacer(modifier = Modifier.height(16.dp))
-                 LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    items(homeState.availableCars) { car ->
-                        AvailableCarCard(car = car, onClick = { onCarClick(car.id.toInt()) })
+                
+                val availableCars = if (isAvailableCarsExpanded) homeState.availableCars else homeState.availableCars.take(4)
+                val availableRows = (availableCars.size + 1) / 2
+
+                for (i in 0 until availableRows) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        val firstIndex = i * 2
+                        val secondIndex = firstIndex + 1
+                        
+                        if (firstIndex < availableCars.size) {
+                             Box(modifier = Modifier.weight(1f)) {
+                                val carData = availableCars[firstIndex]
+                                CarCard(
+                                    car = Car(
+                                        id = carData.id.toInt(),
+                                        name = carData.carName,
+                                        pricePerDay = "KSh ${carData.price}",
+                                        imageUrl = carData.carImageUrl
+                                    ),
+                                    onClick = { onCarClick(carData.id.toInt()) }
+                                )
+                             }
+                        } else {
+                             Spacer(modifier = Modifier.weight(1f))
+                        }
+                        
+                        if (secondIndex < availableCars.size) {
+                             Box(modifier = Modifier.weight(1f)) {
+                                val carData = availableCars[secondIndex]
+                                CarCard(
+                                    car = Car(
+                                        id = carData.id.toInt(),
+                                        name = carData.carName,
+                                        pricePerDay = "KSh ${carData.price}",
+                                        imageUrl = carData.carImageUrl
+                                    ),
+                                    onClick = { onCarClick(carData.id.toInt()) }
+                                )
+                             }
+                        } else {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
 
@@ -270,7 +320,7 @@ fun SearchBar() {
 }
 
 @Composable
-private fun SectionTitle(title: String, onSeeAll: (() -> Unit)? = null) {
+private fun SectionTitle(title: String, isExpanded: Boolean = false, onSeeAll: (() -> Unit)? = null) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -284,7 +334,7 @@ private fun SectionTitle(title: String, onSeeAll: (() -> Unit)? = null) {
         )
         onSeeAll?.let {
             TextButton(onClick = it) {
-                Text("View All", color = Color.Gray)
+                Text(if (isExpanded) "View Less" else "View All", color = Color.Gray)
             }
         }
     }
@@ -426,29 +476,3 @@ data class Car(
     val imageUrl: String? = null
 )
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AvailableCarCard(car: AvailableCars, onClick: () -> Unit) {
-    Card(
-        onClick = onClick,
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        modifier = Modifier.width(200.dp)
-    ) {
-        Column(modifier = Modifier.padding(12.dp)) {
-            AsyncImage(
-                model = car.carImageUrl,
-                contentDescription = car.carName,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-                    .clip(RoundedCornerShape(12.dp))
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(car.carName, fontWeight = FontWeight.Bold)
-            Text("KSh ${car.price}/day", color = Color.Gray, fontSize = 12.sp)
-        }
-    }
-}

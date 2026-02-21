@@ -38,7 +38,7 @@ fun ProfileScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5)) // Light gray background
+            .background(Color(0xFFF5F5F5))
     ) {
         when {
             error != null -> {
@@ -63,15 +63,15 @@ fun ProfileScreen(
                             .height(350.dp)
                             .background(Color(0xFF212121))
                     ) {
-                        Text(
-                            text = "My Profile",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .align(Alignment.TopCenter)
-                                .padding(top = 48.dp)
-                        )
+//                        Text(
+//                            text = "My Profile",
+//                            style = MaterialTheme.typography.headlineMedium,
+//                            color = Color.White,
+//                            fontWeight = FontWeight.Bold,
+//                            modifier = Modifier
+//                                .align(Alignment.TopCenter)
+//                                .padding(top = 48.dp)
+//                        )
                         
                         Surface(
                             modifier = Modifier
