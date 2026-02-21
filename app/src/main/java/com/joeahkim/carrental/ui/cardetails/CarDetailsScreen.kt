@@ -73,11 +73,13 @@ fun CarDetailsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 40.dp, start = 16.dp, end = 16.dp)
+                        .padding(top = 40.dp)
                 ) {
                     // Header
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -111,10 +113,10 @@ fun CarDetailsScreen(
                         contentDescription = "${car.make} ${car.model}",
                         placeholder = painterResource(R.drawable.ic_launcher_foreground),
                         error = painterResource(R.drawable.ic_launcher_foreground),
-                        contentScale = ContentScale.Fit,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(220.dp)
+                            .height(280.dp)
                     )
                 }
 
@@ -228,7 +230,7 @@ fun CarDetailsScreen(
                                         .height(50.dp)
                                         .width(160.dp)
                                 ) {
-                                    Text("Buy now", color = Color.White)
+                                    Text("Book now", color = Color.White)
                                 }
                             }
                         }

@@ -430,7 +430,6 @@ data class Car(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AvailableCarCard(car: AvailableCars, onClick: () -> Unit) {
-    // Keeping simpler version for horizontal list if needed, or update to match CarCard style
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(20.dp),

@@ -60,8 +60,8 @@ fun ProfileScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp)
-                            .background(Color(0xFF212121)) // Dark background
+                            .height(350.dp)
+                            .background(Color(0xFF212121))
                     ) {
                         Text(
                             text = "My Profile",
